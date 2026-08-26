@@ -6,16 +6,17 @@ Uma biblioteca JavaScript didática, leve e intuitiva desenvolvida para simplifi
 
 ## 🔗 Links Úteis e Documentação
 
-- 📄 **Documentação Oficial (PDF):** [Baixar/Visualizar Manual em PDF (JS_CG_2D_API.pdf)](./JS_CG_2D_API.pdf)
-- 🌐 **Demonstração ao Vivo (GitHub Pages):** [Acessar Galeria de Exemplos no Navegador](https://rissetti.github.io/JS_CG_2D_API/)
+- 📄 **Documentação Oficial:** [Baixar/Visualizar Manual em PDF](./JS_CG_2D_API.pdf)
+- 🌐 **Exemplos de Demonstração:** [Acessar Galeria de Exemplos no Navegador](https://rissetti.github.io/JS_CG_2D_API/)
 
 ---
 
 ## 🚀 Recursos Principais
 
 - **Game Loop Robusto:** Suporte nativo a tempo delta (`dt`) para movimentação independente do hardware e trava de limite superior de FPS.
-- **Detecção de Colisão Polimórfica (AABB):** Sistema inteligente para extração de limites físicos de plataformas e objetos, utilizando operadores modernos (`?.` e `??`).
-- **Gerenciamento de Entradas Integrado:** Captura simplificada de teclado e mouse com bloqueio automático de rolagem da página (*prevent scroll* nas setas e espaço).
+- **Detecção de Colisão Polimórfica (AABB):** Sistema inteligente para extração de limites físicos de plataformas e objetos.
+- **Primitivas Gráficas e Personagens:** Sistema de primitivas básicas e personagens com atuação de gravidade e colisão.
+- **Gerenciamento de Entradas Integrado:** Captura simplificada de teclado e mouse.
 - **Módulo de Áudio (`EfeitosSonoros`):** Gerenciamento e execução contínua de áudios sem travamentos na renderização.
 - **Transformações Geométricas:** Manipulação declarativa de matrizes de transformação com histórico (`empilhar` / `desempilhar`, `transladar`, `rotacionar`).
 
@@ -27,6 +28,8 @@ Uma biblioteca JavaScript didática, leve e intuitiva desenvolvida para simplifi
 ```html
 <script src="js_cg_2d_api.js"></script>
 ```
+
+---
 
 ### Para melhor compreensão, analise os códigos dos [exemplos](https://rissetti.github.io/JS_CG_2D_API/) disponibilizados! 
 

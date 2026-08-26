@@ -32,4 +32,4 @@ Uma biblioteca JavaScript didática, leve e intuitiva desenvolvida para simplifi
 
 ## 📄 Licença
 
-Este projeto é distribuído sob a Licença MIT. Para mais detalhes, consulte o arquivo LICENSE.
+Este projeto é distribuído sob a Licença MIT. Para mais detalhes, consulte o arquivo [LICENSE](./LICENSE).

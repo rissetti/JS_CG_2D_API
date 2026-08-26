@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JS_CG_2D_API - Galeria de Exemplos</title>
+    <style>
+        :root {
+            --bg-color: #0f172a;
+            --card-bg: #1e293b;
+            --card-hover: #334155;
+            --accent-color: #38bdf8;
+            --text-main: #f8fafc;
+            --text-sub: #94a3b8;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            padding: 2rem;
+            min-height: 100vh;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        header h1 {
+            font-size: 2.5rem;
+            color: var(--accent-color);
+            margin-bottom: 0.5rem;
+        }
+
+        header p {
+            color: var(--text-sub);
+            font-size: 1.1rem;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .card {
+            background-color: var(--card-bg);
+            border: 1px solid #334155;
+            border-radius: 12px;
+            padding: 1.5rem;
+            text-decoration: none;
+            color: var(--text-main);
+            transition: all 0.2s ease-in-out;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .card:hover {
+            background-color: var(--card-hover);
+            transform: translateY(-4px);
+            border-color: var(--accent-color);
+            box-shadow: 0 10px 20px rgba(56, 189, 248, 0.15);
+        }
+
+        .card h3 {
+            font-size: 1.1rem;
+            margin-bottom: 0.5rem;
+            word-break: break-word;
+        }
+
+        .card span {
+            font-size: 0.85rem;
+            color: var(--accent-color);
+            font-weight: 600;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 4rem;
+            color: var(--text-sub);
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>🎮 JS_CG_2D_API</h1>
+        <p>Coleção de Pequenos Exemplos de Uso da JS_CG_2D_API</p>
+    </header>
+
+    <main class="container">
+        <a class="card" href="./DesafioPlanoPontos/">
+            <h3>Desafio Plano Pontos</h3>
+            <span>Executar Exemplo →</span>
+        </a>
+        <a class="card" href="./ExemploAtualizarDT/">
+            <h3>Exemplo Atualizar DT</h3>
+            <span>Executar Exemplo →</span>
+        </a>
+        <a class="card" href="./ExemploCarrinhoColisores/">
+            <h3>Exemplo Carrinho Colisores</h3>
+            <span>Executar Exemplo →</span>
+        </a>
+        <a class="card" href="./ExemploCompleto/">
+            <h3>Exemplo Completo</h3>
+            <span>Executar Exemplo →</span>
+        </a>
+        <a class="card" href="./ExemploCompleto2/">
+            <h3>Exemplo Completo 2</h3>
+            <span>Executar Exemplo →</span>
+        </a>
+        <a class="card" href="./ExemploCorrida/">
+            <h3>Exemplo Corrida</h3>
+            <span>Executar Exemplo →</span>
+        </a>
+        <a class="card" href="./ExemploJogoResgate/">
+            <h3>Exemplo Jogo Resgate</h3>
+            <span>Executar Exemplo →</span>
+        </a>
+        <a class="card" href="./ExemploMario/">
+            <h3>Exemplo Mario</h3>
+            <span>Executar Exemplo →</span>
+        </a>
+        <a class="card" href="./ExemploPacMan/">
+            <h3>Exemplo PacMan</h3>
+            <span>Executar Exemplo →</span>
+        </a>
+        <a class="card" href="./ExemploPersonagemInimigo/">
+            <h3>Exemplo Personagem Inimigo</h3>
+            <span>Executar Exemplo →</span>
+        </a>
+        <a class="card" href="./ExemploPlano/">
+            <h3>Exemplo Plano</h3>
+            <span>Executar Exemplo →</span>
+        </a>
+        <a class="card" href="./ExemploPlataforma/">
+            <h3>Exemplo Plataforma</h3>
+            <span>Executar Exemplo →</span>
+        </a>
+        <a class="card" href="./ExemploPontoFugitivo/">
+            <h3>Exemplo Ponto Fugitivo</h3>
+            <span>Executar Exemplo →</span>
+        </a>
+        <a class="card" href="./ExemploRotacao/">
+            <h3>Exemplo Rotação</h3>
+            <span>Executar Exemplo →</span>
+        </a>
+        <a class="card" href="./ExemploSnake/">
+            <h3>Exemplo Snake</h3>
+            <span>Executar Exemplo →</span>
+        </a>
+        <a class="card" href="./ExemploSonic/">
+            <h3>Exemplo Sonic</h3>
+            <span>Executar Exemplo →</span>
+        </a>
+        <a class="card" href="./ExemploSpace/">
+            <h3>Exemplo Space Invaders</h3>
+            <span>Executar Exemplo →</span>
+        </a>
+        <a class="card" href="./ExemploTimers/">
+            <h3>Exemplo Timers</h3>
+            <span>Executar Exemplo →</span>
+        </a>
+        <a class="card" href="./ExemploTransformacoes/">
+            <h3>Exemplo Transformações</h3>
+            <span>Executar Exemplo →</span>
+        </a>
+        <a class="card" href="./PrimeiraAula/">
+            <h3>Primeira Aula</h3>
+            <span>Executar Exemplo →</span>
+        </a>
+        <a class="card" href="./TemplateInicial/">
+            <h3>Template Inicial</h3>
+            <span>Executar Exemplo →</span>
+        </a>
+    </main>
+
+    <footer>
+        <p>Desenvolvido para apoio às aulas de Computação Gráfica</p>
+    </footer>
+
+</body>
+</html>

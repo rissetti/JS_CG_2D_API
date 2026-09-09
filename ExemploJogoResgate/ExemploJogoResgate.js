@@ -156,5 +156,5 @@ class ExemploJogoResgate extends JS_CG_2D_API {
 }
 
 window.addEventListener("load", () => {
-  new ExemploJogoResgate("Exemplo Jogo Resgate", "gameCanvas", 60, 800, 600);
+  new ExemploJogoResgate("Exemplo Jogo Resgate", "gameCanvas", 800, 600);
 });

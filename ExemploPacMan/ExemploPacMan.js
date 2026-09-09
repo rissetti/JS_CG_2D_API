@@ -180,5 +180,5 @@ class ExemploPacMan extends JS_CG_2D_API {
 }
 
 window.addEventListener("load", () => {
-    new ExemploPacMan("Exemplo PacMan", "gameCanvas", 60, 448, 320);
+    new ExemploPacMan("Exemplo PacMan", "gameCanvas", 448, 320);
 });

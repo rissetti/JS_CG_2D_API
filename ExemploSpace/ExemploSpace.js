@@ -63,6 +63,6 @@ class ExemploSpace extends JS_CG_2D_API {
 
 
 window.addEventListener("load", () => {
-  new ExemploSpace("Space Invaders 0.0.0.0.1", "gameCanvas", 60, 600, 400);
+  new ExemploSpace("Space Invaders 0.0.0.0.1", "gameCanvas", 600, 400);
 });
 

@@ -50,8 +50,8 @@ class ExemploPontoFugitivo extends JS_CG_2D_API {
     let cx = this.larguraTela() / 2;
     let cy = this.alturaTela() / 2;
 
-    let px = e.offsetX - cx;
-    let py = e.offsetY - cy;
+    let px = e.x - cx;
+    let py = e.y - cy;
 
     this.pontos.push(new Ponto(px, py));
 
@@ -134,5 +134,5 @@ class ExemploPontoFugitivo extends JS_CG_2D_API {
 }
 
 window.addEventListener("load", () => {
-  new ExemploPontoFugitivo("Exemplo Ponto Fugitivo!", "gameCanvas", 100, 800, 600);
+  new ExemploPontoFugitivo("Exemplo Ponto Fugitivo!", "gameCanvas", 800, 600);
 });

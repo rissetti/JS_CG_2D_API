@@ -13,41 +13,15 @@
  *
  * Nota sobre Construtores:
  * Não é necessário declarar um método constructor() na subclasse (classe do Jogo). Toda a inicialização de variáveis
- * e objetos  deve ser feita no método acaoAoIniciar(), que é chamado automaticamente. A declaração de um construtor
+ * e objetos deve ser feita no método acaoAoIniciar(), que é chamado automaticamente. A declaração de um construtor
  * só é necessária caso o jogo precise receber parâmetros customizados extras, sendo obrigatório utilizar super(...).
  *
  * @example
  * <!-- 1. Estrutura básica HTML (index.html) -->
  * <!DOCTYPE html>
- * <html lang="pt-BR">
- * <head>
- *   <meta charset="UTF-8">
- *   <meta name="viewport" content="width=device-width, initial-scale=1.0">
- *   <title>Meu Jogo</title>
- *   <style>
- *     body {
- *       margin: 0;
- *       display: flex;
- *       justify-content: center;
- *       align-items: center;
- *       min-height: 100vh;
- *       background-color: #121212;
- *     }
- *
- *     canvas {
- *       border: 2px solid #ffffff;
- *       box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
- *     }
- *   </style>
- * </head>
- * <body>
- *   <canvas id="meuCanvas"></canvas>
- *
- *   <!-- Carrega a API primeiro, e em seguida o arquivo do jogo -->
- *   <script src="js_cg_2d_api.js"></script>
- *   <script src="meu_jogo.js"></script>
- * </body>
- * </html>
+ * <meta charset="UTF-8">
+ * <script src="js_cg_2d_api.js"></script>
+ * <script src="jogo.js"></script>
  *
  * @example
  * // 2. Implementação do Jogo em JS (jogo.js - uso padrão):
@@ -67,20 +41,20 @@
  * }
  *
  * window.addEventListener("load", () => {
- *   new MeuJogo("Título do Jogo", "meuCanvas", 60, 800, 600);
+ *   new MeuJogo("Título do Jogo", "gameCanvas", 800, 600);
  * });
  *
  * @example
  * // 3. Uso avançado (com construtor para parâmetros customizados extras):
  * class JogoComModo extends JS_CG_2D_API {
  *   constructor(dificuldade, ...parametrosBase) {
- *     super(...parametrosBase); // Repassa nome, canvasId, fps, largura e altura
+ *     super(...parametrosBase); // Repassa nome, canvasId, largura e altura
  *     this.dificuldade = dificuldade;
  *   }
  * }
  *
  * window.addEventListener("load", () => {
- *   new JogoComModo("Difícil", "Título do Jogo", "meuCanvas", 60, 800, 600);
+ *   new JogoComModo("Difícil", "Título do Jogo", "gameCanvas", 800, 600);
  * });
  */
 
@@ -97,6 +71,177 @@ const Estilo = Object.freeze({
   /** Renderiza a primitiva com preenchimento sólido. */
   PREENCHIDO: 3,
 });
+
+/**
+ * Representa um botão virtual interativo na tela para suporte a interações via Touch ou Mouse.
+ */
+class BotaoTouch {
+  /**
+   * Cria uma instância de um botão touch virtual.
+   * @param {string} id - Identificador único do botão.
+   * @param {number} x - Posição X no canvas virtual.
+   * @param {number} y - Posição Y no canvas virtual.
+   * @param {number} largura - Largura do botão em pixels.
+   * @param {number} altura - Altura do botão em pixels.
+   * @param {string} [rotulo=""] - Texto ou símbolo exibido no centro do botão.
+   * @param {string|null} [teclaAssociada=null] - Nome da tecla vinculada a ser simulada (ex: "ArrowLeft", " ", "a").
+   */
+  constructor(id, x, y, largura, altura, rotulo = "", teclaAssociada = null) {
+    /** @type {string} Identificador único do botão. */
+    this.id = id;
+    /** @type {number} Posição X inicial. */
+    this.x = x;
+    /** @type {number} Posição Y inicial. */
+    this.y = y;
+    /** @type {number} Largura do botão. */
+    this.largura = largura;
+    /** @type {number} Altura do botão. */
+    this.altura = altura;
+    /** @type {string} Rótulo exibido. */
+    this.rotulo = rotulo;
+    /** @type {string|null} Tecla do teclado simulada ao pressionar. */
+    this.teclaAssociada = teclaAssociada;
+    /** @type {boolean} Indica se o botão está atualmente pressionado. */
+    this.pressionado = false;
+
+    // Estilização padrão
+    /** @type {string} Cor de fundo em estado normal. */
+    this.corPadrao = "rgba(30, 30, 30, 0.45)";
+    /** @type {string} Cor de fundo em estado pressionado. */
+    this.corPressionado = "rgba(80, 80, 80, 0.75)";
+    /** @type {string} Cor do contorno do botão. */
+    this.corBorda = "rgba(255, 255, 255, 0.4)";
+    /** @type {string} Cor do texto do rótulo. */
+    this.corTexto = "#FFFFFF";
+    /** @type {number} Tamanho da fonte do rótulo em pixels. */
+    this.tamanhoFonte = 20;
+
+    /** @type {number} Duração do feedback tátil de vibração em milissegundos (0 desativa). */
+    this.tempoVibracao = 15;
+  }
+
+  /**
+   * Define a duração da vibração ao pressionar o botão.
+   * @param {number} ms - Tempo de vibração em milissegundos.
+   * @returns {BotaoTouch} Retorna a própria instância para encadeamento.
+   */
+  setVibracao(ms) {
+    this.tempoVibracao = ms;
+    return this;
+  }
+
+  /**
+   * Dispara o feedback tátil no dispositivo via Vibration API, caso haja suporte.
+   */
+  vibrar() {
+    if (
+      this.tempoVibracao > 0 &&
+      typeof navigator !== "undefined" &&
+      "vibrate" in navigator
+    ) {
+      try {
+        navigator.vibrate(this.tempoVibracao);
+      } catch (e) {
+        // Ignora caso o navegador bloqueie permissão de vibração sem interação prévia
+      }
+    }
+  }
+
+  /**
+   * Define todas as cores do botão em uma única chamada.
+   * @param {string} [corPadrao] - Cor de fundo padrão.
+   * @param {string} [corPressionado] - Cor de fundo quando pressionado.
+   * @param {string|null} [corBorda=null] - Cor da borda.
+   * @param {string|null} [corTexto=null] - Cor do texto.
+   * @returns {BotaoTouch} Retorna a própria instância para encadeamento.
+   */
+  setCores(corPadrao, corPressionado, corBorda = null, corTexto = null) {
+    if (corPadrao) this.corPadrao = corPadrao;
+    if (corPressionado) this.corPressionado = corPressionado;
+    if (corBorda) this.corBorda = corBorda;
+    if (corTexto) this.corTexto = corTexto;
+    return this;
+  }
+
+  /**
+   * Define a cor de fundo padrão.
+   * @param {string} cor - Cor CSS.
+   * @returns {BotaoTouch} Retorna a própria instância.
+   */
+  setCorPadrao(cor) {
+    this.corPadrao = cor;
+    return this;
+  }
+
+  /**
+   * Define a cor de fundo quando ativado.
+   * @param {string} cor - Cor CSS.
+   * @returns {BotaoTouch} Retorna a própria instância.
+   */
+  setCorPressionado(cor) {
+    this.corPressionado = cor;
+    return this;
+  }
+
+  /**
+   * Define a cor do contorno.
+   * @param {string} cor - Cor CSS.
+   * @returns {BotaoTouch} Retorna a própria instância.
+   */
+  setCorBorda(cor) {
+    this.corBorda = cor;
+    return this;
+  }
+
+  /**
+   * Define a cor do rótulo.
+   * @param {string} cor - Cor CSS.
+   * @returns {BotaoTouch} Retorna a própria instância.
+   */
+  setCorTexto(cor) {
+    this.corTexto = cor;
+    return this;
+  }
+
+  /**
+   * Define a dimensão da fonte do texto.
+   * @param {number} tamanho - Tamanho em px.
+   * @returns {BotaoTouch} Retorna a própria instância.
+   */
+  setTamanhoFonte(tamanho) {
+    this.tamanhoFonte = tamanho;
+    return this;
+  }
+
+  /**
+   * Testa se um ponto (px, py) está contido dentro do retângulo do botão.
+   * @param {number} px - Coordenada X.
+   * @param {number} py - Coordenada Y.
+   * @returns {boolean} Verdadeiro se estiver dentro.
+   */
+  contem(px, py) {
+    return (
+      px >= this.x &&
+      px <= this.x + this.largura &&
+      py >= this.y &&
+      py <= this.y + this.altura
+    );
+  }
+
+  /**
+   * Verifica se um evento de clique ou toque ocorreu dentro do botão.
+   * @param {Object} e - Evento com coordenadas normalizadas (e.x e e.y).
+   * @returns {boolean} Verdadeiro se o evento atingiu o botão.
+   */
+  foiClicado(e) {
+    return (
+      e &&
+      typeof e.x === "number" &&
+      typeof e.y === "number" &&
+      this.contem(e.x, e.y)
+    );
+  }
+}
 
 /**
  * Representa uma caixa delimitadora alinhada aos eixos (AABB - Axis-Aligned Bounding Box) para detecção de colisão 2D.
@@ -364,7 +509,7 @@ class Personagem {
         }
       }
     }
-  }  
+  }
 
   /**
    * Executa a ação de pulo caso o personagem esteja encostado no chão.
@@ -437,20 +582,32 @@ class Personagem {
  */
 class JS_CG_2D_API {
   /**
-   * @param {string} nome - Título da janela/documento.
-   * @param {string} canvasId - ID do elemento HTMLCanvasElement. Se não existir, será criado.
-   * @param {number} fps - Taxa de quadros desejada por segundo.
-   * @param {number} w - Largura da tela em pixels.
-   * @param {number} h - Altura da tela em pixels.
+   * @param {string} nome - Título do jogo (Obrigatório)
+   * @param {string} canvasId - ID do Canvas (Obrigatório)
+   * @param {number} w - Largura em pixels (Obrigatório)
+   * @param {number} h - Altura em pixels (Obrigatório)
+   * @param {number} [fps=60] - Taxa de quadros (Opcional, padrão: 60)
    */
-  constructor(nome, canvasId, fps, w, h) {
+  constructor(nome, canvasId, w, h, fps = 60) {
+    // Validação de todos os parâmetros obrigatórios
+    if (!nome || !canvasId || w === undefined || h === undefined) {
+      throw new Error(
+        "Erro de Instanciação: Os parâmetros 'nome', 'canvasId', 'w' (largura) e 'h' (altura) são OBRIGATÓRIOS!",
+      );
+    }
+    if (typeof w !== "number" || typeof h !== "number" || w <= 0 || h <= 0) {
+      throw new Error(
+        "Erro de Instanciação: 'w' (largura) e 'h' (altura) precisam ser números positivos válidos.",
+      );
+    }
     this.nome = nome;
     this.largura = w;
     this.altura = h;
     this.larguraPadrao = w;
     this.alturaPadrao = h;
     this._fps = fps;
-    this._intervaloFps = 1000 / fps;
+    // Se fps for <= 0, desativa o limite de taxa e roda no máximo do navegador
+    this._intervaloFps = fps > 0 ? 1000 / fps : 0;
     this._ultimoFrame = 0;
     this._loopId = null;
 
@@ -460,8 +617,15 @@ class JS_CG_2D_API {
     this._corContorno = "black";
     this._corPreenchimento = "black";
 
-    this.canvas = document.getElementById(canvasId);
+    /** @type {Map<string, BotaoTouch>} Coleção de botões virtuais cadastrados. */
+    this.botoesTouch = new Map();
 
+    // Configuração metas e CSS global
+    this._configurarTagsIniciais();
+    this._injetarEstilosPadrao();
+
+    // Busca o canvas ou cria um novo caso não tenha colocado no HTML (padrão).
+    this.canvas = document.getElementById(canvasId);
     if (!this.canvas) {
       this.canvas = document.createElement("canvas");
       this.canvas.id = canvasId;
@@ -470,6 +634,13 @@ class JS_CG_2D_API {
 
     this.canvas.width = this.largura;
     this.canvas.height = this.altura;
+
+    // Adaptação Responsiva mantendo o aspect-ratio
+    this.canvas.style.maxWidth = "100vw";
+    this.canvas.style.maxHeight = "100vh";
+    this.canvas.style.objectFit = "contain";
+    this.canvas.style.touchAction = "none"; // Impede gestos padrão do navegador (scroll/zoom)
+
     // Desabilita clique com botão direito do mouse dentro do canvas
     this.canvas.addEventListener("contextmenu", (e) => e.preventDefault());
     this.canvas.tabIndex = 1;
@@ -488,19 +659,283 @@ class JS_CG_2D_API {
   }
 
   /**
-   * Associa os manipuladores de eventos nativos do navegador às rotas da API.
+   * Garante que tags essenciais existam no <head>
+   * @private
+   */
+  _configurarTagsIniciais() {
+    // Verifica a codificação atual e avisa se não estiver em UTF-8
+    const charsetAtual = (document.characterSet || "").toUpperCase();
+    if (charsetAtual && charsetAtual !== "UTF-8") {
+      console.warn(
+        `[JS_CG_2D_API] Alerta: O navegador carregou este projeto em '${charsetAtual}'. ` +
+          "Para corrigir acentos e caracteres especiais, adicione '<meta charset=\"UTF-8\">'" +
+          " na primeira linha abaixo de <!DOCTYPE html> de seu arquivo .html",
+      );
+    }
+    // Tag de viewport
+    if (!document.querySelector("meta[name='viewport']")) {
+      const meta = document.createElement("meta");
+      meta.name = "viewport";
+      meta.content =
+        "width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no";
+      document.head.appendChild(meta);
+    }
+  }
+
+  /**
+   * Injeta estilos CSS pré-configurados no topo do head sem sobresscrever CSS externo.
+   * @private
+   */
+  _injetarEstilosPadrao() {
+    if (document.getElementById("js-cg-2d-styles")) return;
+
+    const style = document.createElement("style");
+    style.id = "js-cg-2d-styles";
+    style.textContent = `
+      * { 
+        box-sizing: border-box; 
+        margin: 0; 
+        padding: 0; 
+      }
+      html, body {
+        width: 100vw;
+        height: 100vh;
+        height: 100dvh;
+        background: radial-gradient(circle at center, #1a1c24 0%, #0d0e12 100%);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        overflow: hidden;
+        font-family: system-ui, -apple-system, sans-serif;
+        user-select: none;
+        -webkit-user-select: none;
+      }
+      canvas {
+        display: block;
+        background-color: #000000;
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        border-radius: 6px;
+        box-shadow: 0 20px 50px rgba(0, 0, 0, 0.7), 0 0 15px rgba(255, 255, 255, 0.03);
+        outline: none;
+        image-rendering: pixelated;
+        image-rendering: crisp-edges;
+      }
+    `;
+    document.head.prepend(style);
+  }
+
+  /**
+   * Converte as coordenadas do evento de ponteiro/touch/mouse na tela para a escala de resolução interna do Canvas.
+   * @private
+   * @param {MouseEvent|TouchEvent} e - Evento de entrada nativo do navegador.
+   * @returns {{x: number, y: number}} Coordenadas ajustadas à escala real do Canvas.
+   */
+  _obterCoordenadasCanvas(e) {
+    const rect = this.canvas.getBoundingClientRect();
+    const scaleX = this.largura / rect.width;
+    const scaleY = this.altura / rect.height;
+
+    let clientX = e.clientX;
+    let clientY = e.clientY;
+
+    if (e.touches && e.touches.length > 0) {
+      clientX = e.touches[0].clientX;
+      clientY = e.touches[0].clientY;
+    } else if (e.changedTouches && e.changedTouches.length > 0) {
+      clientX = e.changedTouches[0].clientX;
+      clientY = e.changedTouches[0].clientY;
+    }
+
+    return {
+      x: (clientX - rect.left) * scaleX,
+      y: (clientY - rect.top) * scaleY,
+    };
+  }
+
+  /**
+   * Encapsula eventos nativos injetando coordenadas normalizadas (x, y, offsetX, offsetY)
+   * compatíveis com a resolução interna do Canvas.
+   * @private
+   * @param {Event} e - Evento nativo.
+   * @returns {Object} Evento com coordenadas ajustadas.
+   */
+  _normalizarEvento(e) {
+    const coords = this._obterCoordenadasCanvas(e);
+    const evtNormalizado = Object.create(e);
+
+    Object.defineProperties(evtNormalizado, {
+      x: {
+        value: coords.x,
+        writable: true,
+        configurable: true,
+        enumerable: true,
+      },
+      y: {
+        value: coords.y,
+        writable: true,
+        configurable: true,
+        enumerable: true,
+      },
+      offsetX: {
+        value: coords.x,
+        writable: true,
+        configurable: true,
+        enumerable: true,
+      },
+      offsetY: {
+        value: coords.y,
+        writable: true,
+        configurable: true,
+        enumerable: true,
+      },
+      preventDefault: {
+        value: () => e.preventDefault?.(),
+        writable: true,
+        configurable: true,
+        enumerable: true,
+      },
+      stopPropagation: {
+        value: () => e.stopPropagation?.(),
+        writable: true,
+        configurable: true,
+        enumerable: true,
+      },
+    });
+
+    return evtNormalizado;
+  }
+
+  /**
+   * Avalia as posições dos toques ativos no dispositivo em relação a todos os botões virtuais cadastrados.
+   * @private
+   * @param {TouchEvent} e - Evento Touch original do navegador.
+   */
+  _processarTouches(e) {
+    if (this.botoesTouch.size === 0) return;
+
+    const rect = this.canvas.getBoundingClientRect();
+    const scaleX = this.larguraPadrao / rect.width;
+    const scaleY = this.alturaPadrao / rect.height;
+
+    // Mapeia todas as pontas dos dedos encostadas na tela
+    const toquesAtivos = [];
+    for (let i = 0; i < e.touches.length; i++) {
+      const t = e.touches[i];
+      toquesAtivos.push({
+        x: (t.clientX - rect.left) * scaleX,
+        y: (t.clientY - rect.top) * scaleY,
+      });
+    }
+
+    for (const btn of this.botoesTouch.values()) {
+      const estaPressionado = toquesAtivos.some((t) => btn.contem(t.x, t.y));
+      this._atualizarEstadoBotao(btn, estaPressionado);
+    }
+  }
+
+  /**
+   * Processa o clique ou arraste do mouse nos botões virtuais cadastrados.
+   * @private
+   * @param {MouseEvent} e - Evento de Mouse original do navegador.
+   * @param {boolean} estaPressionando - Indica se algum botão do mouse está pressionado.
+   */
+  _processarMouseBotoes(e, estaPressionando) {
+    if (this.botoesTouch.size === 0) return;
+
+    const coords = this._obterCoordenadasCanvas(e);
+    for (const btn of this.botoesTouch.values()) {
+      const estaSobreOTexto = btn.contem(coords.x, coords.y);
+      const estaPressionado = estaPressionando && estaSobreOTexto;
+      this._atualizarEstadoBotao(btn, estaPressionado);
+    }
+  }
+
+  /**
+   * Transiciona o estado do botão, aciona o feedback tátil e dispara eventos simulados de teclado.
+   * @private
+   * @param {BotaoTouch} btn - Instância do botão processado.
+   * @param {boolean} novoEstado - Novo estado de pressão (true/false).
+   */
+  _atualizarEstadoBotao(btn, novoEstado) {
+    if (novoEstado && !btn.pressionado) {
+      btn.pressionado = true;
+      btn.vibrar(); // Feedback tátil (vibração)
+      if (btn.teclaAssociada) {
+        // Simula evento de tecla pressionada
+        this.teclaPressionada({
+          key: btn.teclaAssociada,
+          preventDefault: () => {},
+        });
+      }
+    } else if (!novoEstado && btn.pressionado) {
+      btn.pressionado = false;
+      if (btn.teclaAssociada) {
+        // Simula evento de tecla liberada
+        this.teclaLiberada({
+          key: btn.teclaAssociada,
+          preventDefault: () => {},
+        });
+      }
+    }
+  }
+
+  /**
+   * Associa os manipuladores de eventos nativos do navegador (Mouse, Touch e Teclado) às rotas internas da API.
    * @private
    */
   _configurarEventos() {
-    this.canvas.addEventListener("click", (e) => this.cliqueDoMouse(e));
-    this.canvas.addEventListener("mousemove", (e) => {
-      if (e.buttons > 0) this.movimentoDoMousePressionado(e);
-      else this.movimentoDoMouse(e);
+    // Eventos de Mouse
+    this.canvas.addEventListener("click", (e) => {
+      const evt = this._normalizarEvento(e);
+      this.cliqueDoMouse(evt);
     });
-    this.canvas.addEventListener("mousedown", (e) => this.mousePressionado(e));
-    this.canvas.addEventListener("mouseup", (e) => this.mouseSolto(e));
+    this.canvas.addEventListener("mousemove", (e) => {
+      const evt = this._normalizarEvento(e);
+      this._processarMouseBotoes(e, e.buttons > 0);
+      if (e.buttons > 0) this.movimentoDoMousePressionado(evt);
+      else this.movimentoDoMouse(evt);
+    });
+    this.canvas.addEventListener("mousedown", (e) => {
+      const evt = this._normalizarEvento(e);
+      this._processarMouseBotoes(e, true);
+      this.mousePressionado(evt);
+    });
+    this.canvas.addEventListener("mouseup", (e) => {
+      const evt = this._normalizarEvento(e);
+      this._processarMouseBotoes(e, false);
+      this.mouseSolto(evt);
+    });
 
-    // Evita rolagem da tela com as setas
+    // Eventos de Touch (Telas Sensíveis ao Toque)
+    const tratarTouch = (e, callback) => {
+      this._processarTouches(e);
+      if (callback) {
+        const evt = this._normalizarEvento(e);
+        callback.call(this, evt);
+      }
+    };
+
+    this.canvas.addEventListener("touchstart", (e) => {
+      e.preventDefault();
+      tratarTouch(e, this.mousePressionado);
+    });
+    this.canvas.addEventListener("touchmove", (e) => {
+      e.preventDefault();
+      tratarTouch(e, this.movimentoDoMousePressionado);
+    });
+    this.canvas.addEventListener("touchend", (e) => {
+      e.preventDefault();
+      tratarTouch(e, (evt) => {
+        this.mouseSolto(evt);
+        this.cliqueDoMouse(evt);
+      });
+    });
+    this.canvas.addEventListener("touchcancel", (e) => {
+      e.preventDefault();
+      tratarTouch(e, this.mouseSolto);
+    });
+
+    // Eventos de Teclado
     window.addEventListener("keydown", (e) => {
       if (
         ["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight", " "].includes(e.key)
@@ -511,7 +946,6 @@ class JS_CG_2D_API {
     });
 
     window.addEventListener("keyup", (e) => this.teclaLiberada(e));
-
     window.addEventListener("beforeunload", () => this.acaoAoSair());
 
     document.addEventListener("fullscreenchange", () => {
@@ -821,9 +1255,15 @@ class JS_CG_2D_API {
    * @param {HTMLImageElement} imgObj - Elemento de imagem carregado.
    * @param {number} x - Coordenada X de destino.
    * @param {number} y - Coordenada Y de destino.
+   * @param {number} [l] - (Opcional) Largura de exibição no canvas.
+   * @param {number} [a] - (Opcional) Altura de exibição no canvas.
    */
-  imagem(imgObj, x, y) {
-    this.gc.drawImage(imgObj, x, y);
+  imagem(imgObj, x, y, l, a) {
+    if (l !== undefined && a !== undefined) {
+      this.gc.drawImage(imgObj, x, y, l, a);
+    } else {
+      this.gc.drawImage(imgObj, x, y);
+    }
   }
 
   /** Salva o estado atual da matriz de transformação e do contexto gráfico. */
@@ -857,6 +1297,9 @@ class JS_CG_2D_API {
   _atualizarTimers() {
     const agora = performance.now();
     for (const [nome, t] of this.timers.entries()) {
+      // Ignora a checagem se o temporizador estiver pausado
+      if (t.pausado) continue;
+
       if (agora >= t.fimMs) {
         t.acao();
         if (t.repetir) {
@@ -869,20 +1312,27 @@ class JS_CG_2D_API {
   }
 
   /**
-   * Ciclo de execução sincronizado com a taxa de quadros (FPS).
+   * Ciclo de execução sincronizado com a taxa de quadros (FPS) ou livre.
    * @private
    */
   _rodar(agora) {
     if (!this._ultimoFrame) this._ultimoFrame = agora;
     const decorrido = agora - this._ultimoFrame;
-    // Converte de milissegundos para SEGUNDOS
-    const dt = decorrido / 1000;
 
-    if (decorrido >= this._intervaloFps) {
-      this._ultimoFrame = agora - (decorrido % this._intervaloFps);
+    // Executa se o FPS for livre (<= 0) ou se atingiu o intervalo do FPS limite
+    if (this._fps <= 0 || decorrido >= this._intervaloFps) {
+      const dt = decorrido / 1000;
+
+      // Atualiza o marcador de tempo respeitando o resto de divisão se for FPS cravado
+      this._ultimoFrame =
+        this._fps > 0 && this._intervaloFps > 0
+          ? agora - (decorrido % this._intervaloFps)
+          : agora;
+
       this._atualizarTimers();
       this.atualizar(dt);
       this.desenhar();
+      this._desenharBotoesTouch();
     }
 
     if (this._loopId) {
@@ -938,7 +1388,7 @@ class JS_CG_2D_API {
   limparTela(cor) {
     this.gc.fillStyle = cor;
     this.gc.fillRect(0, 0, this.largura, this.altura);
-  } 
+  }
 
   /**
    * Cria um temporizador acionado pelo relógio do sistema (performance.now).
@@ -965,7 +1415,34 @@ class JS_CG_2D_API {
    */
   pararTimer(nome) {
     this.timers.delete(nome);
-  }  
+  }
+
+  /**
+   * Pausa a contagem de um temporizador mantendo o tempo restante congelado.
+   * @param {string} nome - Nome do timer.
+   */
+  pausarTimer(nome) {
+    const t = this.timers.get(nome);
+    if (!t || t.pausado) return;
+
+    const agora = performance.now();
+    t.tempoRestanteMs = Math.max(t.fimMs - agora, 0);
+    t.pausado = true;
+  }
+
+  /**
+   * Retoma a contagem de um temporizador previamente pausado.
+   * @param {string} nome - Nome do timer.
+   */
+  retomarTimer(nome) {
+    const t = this.timers.get(nome);
+    if (!t || !t.pausado) return;
+
+    const agora = performance.now();
+    t.fimMs = agora + t.tempoRestanteMs;
+    t.pausado = false;
+    delete t.tempoRestanteMs;
+  }
 
   /**
    * Retorna o tempo restante de um temporizador em segundos reais.
@@ -975,6 +1452,11 @@ class JS_CG_2D_API {
   getTimer(nome) {
     const t = this.timers.get(nome);
     if (!t) return -1;
+
+    // Se estiver pausado, retorna o tempo congelado
+    if (t.pausado) {
+      return t.tempoRestanteMs / 1000;
+    }
 
     const agora = performance.now();
     const restanteMs = t.fimMs - agora;
@@ -1010,8 +1492,92 @@ class JS_CG_2D_API {
   desenharSprite(sprite) {
     let img = sprite.getImagem();
     if (img && img.complete && img.naturalWidth !== 0) {
-      this.imagem(img, sprite.px, sprite.py);
+      if (sprite.l > 0 && sprite.a > 0) {
+        this.imagem(img, sprite.px, sprite.py, sprite.l, sprite.a);
+      } else {
+        this.imagem(img, sprite.px, sprite.py);
+      }
     }
+  }
+
+  /**
+   * Cria e registra um novo botão virtual interativo no Canvas.
+   * @param {string} id - Identificador único do botão.
+   * @param {number} x - Posição X.
+   * @param {number} y - Posição Y.
+   * @param {number} largura - Largura do botão em pixels.
+   * @param {number} altura - Altura do botão em pixels.
+   * @param {string} [rotulo=""] - Texto/Símbolo exibido no botão.
+   * @param {string|null} [teclaAssociada=null] - Nome da tecla vinculada a ser disparada (ex: "ArrowLeft").
+   * @returns {BotaoTouch} Instância do botão criado.
+   */
+  criarBotaoTouch(
+    id,
+    x,
+    y,
+    largura,
+    altura,
+    rotulo = "",
+    teclaAssociada = null,
+  ) {
+    const btn = new BotaoTouch(
+      id,
+      x,
+      y,
+      largura,
+      altura,
+      rotulo,
+      teclaAssociada,
+    );
+    this.botoesTouch.set(id, btn);
+    return btn;
+  }
+
+  /**
+   * Busca um botão touch registrado através do seu ID.
+   * @param {string} id - Identificador único do botão.
+   * @returns {BotaoTouch|undefined} A instância do botão encontrado ou undefined.
+   */
+  getBotaoTouch(id) {
+    return this.botoesTouch.get(id);
+  }
+
+  /**
+   * Remove um botão registrado da coleção.
+   * @param {string} id - Identificador único do botão a ser removido.
+   */
+  removerBotaoTouch(id) {
+    this.botoesTouch.delete(id);
+  }
+
+  /**
+   * Renderiza na tela todos os botões virtuais cadastrados.
+   * @private
+   */
+  _desenharBotoesTouch() {
+    if (this.botoesTouch.size === 0) return;
+
+    this.empilhar();
+    for (const btn of this.botoesTouch.values()) {
+      this.preenchimento(btn.pressionado ? btn.corPressionado : btn.corPadrao);
+      this.contorno(2, btn.corBorda);
+      this.retangulo(btn.x, btn.y, btn.largura, btn.altura, Estilo.PREENCHIDO);
+      this.retangulo(btn.x, btn.y, btn.largura, btn.altura, Estilo.LINHAS);
+
+      if (btn.rotulo) {
+        this.preenchimento(btn.corTexto);
+        this.gc.textAlign = "center";
+        this.gc.textBaseline = "middle";
+        this.texto(
+          btn.rotulo,
+          btn.x + btn.largura / 2,
+          btn.y + btn.altura / 2,
+          btn.tamanhoFonte,
+          "bold",
+        );
+      }
+    }
+    this.desempilhar();
   }
 
   /** Chamado ao fechar/recarregar a aba do navegador. Sobrescreva para salvar dados. */
@@ -1051,8 +1617,10 @@ class Sprite {
   /**
    * @param {number} [x=0] - Posição X inicial.
    * @param {number} [y=0] - Posição Y inicial.
+   * @param {number} [l=0] - Largura customizada (opcional).
+   * @param {number} [a=0] - Altura customizada (opcional).
    */
-  constructor(x = 0, y = 0) {
+  constructor(x = 0, y = 0, l = 0, a = 0) {
     /** @type {number} Posição X na tela. */
     this.px = x;
     /** @type {number} Posição Y na tela. */
@@ -1061,10 +1629,14 @@ class Sprite {
     this.vx = 0;
     /** @type {number} Velocidade vertical. */
     this.vy = 0;
-    /** @type {number} Largura do Sprite (auto-detectada ao carregar imagem). */
-    this.l = 0;
-    /** @type {number} Altura do Sprite (auto-detectada ao carregar imagem). */
-    this.a = 0;
+
+    /** @type {number} Largura do Sprite. */
+    this.l = l;
+    /** @type {number} Altura do Sprite. */
+    this.a = a;
+
+    /** @type {boolean} Flag para sinalizar se a dimensão foi definida manualmente. */
+    this.tamanhoManual = l > 0 && a > 0;
 
     /** @type {Array<HTMLImageElement>} Quadro de imagens da animação atual. */
     this.animacaoAtual = [];
@@ -1076,7 +1648,18 @@ class Sprite {
     this.tickAtual = 0;
 
     /** @private */
-    this._caixaColisao = new Retangulo2D(x, y, 0, 0);
+    this._caixaColisao = new Retangulo2D(x, y, l, a);
+  }
+
+  /**
+   * Define manualmente a largura e a altura do Sprite.
+   * @param {number} l - Nova largura.
+   * @param {number} a - Nova altura.
+   */
+  setTamanho(l, a) {
+    this.l = l;
+    this.a = a;
+    this.tamanhoManual = true;
   }
 
   /**
@@ -1098,8 +1681,12 @@ class Sprite {
       this.animacaoAtual = listaImagens;
       this.frameAtual = 0;
       this.tickAtual = 0;
-      this.l = 0;
-      this.a = 0;
+
+      // Reseta as dimensões para auto-detecção apenas se não foram fixadas manualmente
+      if (!this.tamanhoManual) {
+        this.l = 0;
+        this.a = 0;
+      }
     }
   }
 
@@ -1138,8 +1725,10 @@ class Sprite {
       }
     }
 
+    // Auto-detecta tamanho apenas se o tamanho manual não estiver ativo
     let imgAtual = this.getImagem();
     if (
+      !this.tamanhoManual &&
       imgAtual &&
       imgAtual.naturalWidth > 0 &&
       (this.l === 0 || this.a === 0)

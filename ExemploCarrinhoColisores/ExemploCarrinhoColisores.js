@@ -159,5 +159,5 @@ class ExemploCarrinhoColisores extends JS_CG_2D_API {
 
 // Inicia o jogo
 window.addEventListener("load", () => {
-    new ExemploCarrinhoColisores("Carrinho com Colisores", "gameCanvas", 60, 1200, 800);
+    new ExemploCarrinhoColisores("Carrinho com Colisores", "gameCanvas", 1200, 800);
 });

@@ -151,5 +151,5 @@ class ExemploCorrida extends JS_CG_2D_API {
 }
 
 window.addEventListener("load", () => {
-    new ExemploCorrida("Exemplo Corrida", "gameCanvas", 60, 800, 600);
+    new ExemploCorrida("Exemplo Corrida", "gameCanvas", 800, 600);
 });

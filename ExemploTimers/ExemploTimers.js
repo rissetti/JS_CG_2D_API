@@ -71,5 +71,5 @@ class ExemploTimers extends JS_CG_2D_API {
 }
 
 window.addEventListener("load", () => {
-    new ExemploTimers("Exemplo de Uso de Timers", "gameCanvas", 100, 800, 600);
+    new ExemploTimers("Exemplo de Uso de Timers", "gameCanvas", 800, 600);
 });

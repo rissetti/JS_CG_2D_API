@@ -70,7 +70,6 @@ class ExemploCompleto extends JS_CG_2D_API {
     }
   }
 
-  // Retorna os obstáculos estáticos
   obterColisores() {
     let xret = this.larguraTela() / 2;
     let yret = 140;
@@ -85,7 +84,7 @@ class ExemploCompleto extends JS_CG_2D_API {
   }
 
   atualizar(dt) {
-    // 1. Movimentação da bolinha autônoma
+    // Movimentação da bolinha autônoma
     this.x += this.vx;
     this.y += this.vy;
     if (this.x > this.larguraTela() || this.x < 0) this.vx *= -1;
@@ -93,7 +92,7 @@ class ExemploCompleto extends JS_CG_2D_API {
 
     if (this.rot) this.ang++;
 
-    // 2. Guarda a posição antes do movimento
+    // Guarda a posição antes do movimento para colisões
     let prevX = this.xImg;
     let prevY = this.yImg;
 
@@ -215,5 +214,5 @@ class ExemploCompleto extends JS_CG_2D_API {
 }
 
 window.addEventListener("load", () => {
-  new ExemploCompleto("Exemplo Completo", "gameCanvas", 100, 600, 400);
+  new ExemploCompleto("Exemplo Completo", "gameCanvas", 600, 400);
 });

@@ -10,10 +10,10 @@ class DesafioPlanoPontos extends JS_CG_2D_API {
         this.deveTransladar = false;
 
         // Limites do movimento
-        this.limiteSuperiorY = 8 * -this.resolucao; // -200
-        this.limiteInferiorY = 3 * -this.resolucao; // -75
-        this.limiteSuperiorX = 8 * this.resolucao;  // 200
-        this.limiteInferiorX = 3 * this.resolucao;  // 75
+        this.limiteSuperiorY = 8 * -this.resolucao;
+        this.limiteInferiorY = 3 * -this.resolucao;
+        this.limiteSuperiorX = 8 * this.resolucao;
+        this.limiteInferiorX = 3 * this.resolucao;
 
         // Posições iniciais
         this.yP1 = this.limiteInferiorY;
@@ -41,39 +41,38 @@ class DesafioPlanoPontos extends JS_CG_2D_API {
     }
 
     cliqueDoMouse(e) {
-        let x = Math.floor(e.offsetX - this.larguraTela() / 2);
-        let y = Math.floor(e.offsetY - this.alturaTela() / 2);
+        let x = Math.floor(e.x - this.larguraTela() / 2);
+        let y = Math.floor(e.y - this.alturaTela() / 2);
 
         this.pontosUsuario.push({ x, y });
         EfeitosSonoros.tocarSom("tiro", true, true);
     }
 
     atualizar() {
-        // Ponto 1 (Blueviolet - Vertical Esquerda)
+        // Ponto 1
         if (this.yP1 <= this.limiteSuperiorY) this.dirP1 *= -1;
         this.yP1 += this.dirP1;
         if (this.yP1 >= this.limiteInferiorY) this.dirP1 *= -1;
 
-        // Ponto 2 (Deeppink - Horizontal Topo)
+        // Ponto 2
         if (this.xP2 <= this.limiteInferiorX) this.dirP2 *= -1;
         this.xP2 += this.dirP2;
         if (this.xP2 >= this.limiteSuperiorX) this.dirP2 *= -1;
 
-        // Ponto 3 (Darkorange - Vertical Direita)
+        // Ponto 3
         if (this.yP3 <= this.limiteSuperiorY) this.dirP3 *= -1;
         this.yP3 += this.dirP3;
         if (this.yP3 >= this.limiteInferiorY) this.dirP3 *= -1;
 
-        // Ponto 4 (Cadetblue - Horizontal Base)
+        // Ponto 4
         this.xP4 += this.dirP4;
         if (this.xP4 <= this.limiteInferiorX || this.xP4 >= this.limiteSuperiorX) {
             this.dirP4 *= -1;
         }
     }
 
-    desenhar() {
-        this.preenchimento("white");
-        this.retangulo(0, 0, this.larguraTela(), this.alturaTela(), Estilo.PREENCHIDO);
+    desenhar() {        
+        this.limparTela("white");        
 
         this.preenchimento("black");
         this.contorno(1, "black");
@@ -149,22 +148,22 @@ class DesafioPlanoPontos extends JS_CG_2D_API {
     }
 
     desenharPontosAnimados() {
-        // P1: Blueviolet
+        // P1
         this.contorno(5, "blueviolet");
         this.preenchimento("blueviolet");
         this.ponto(this.limiteInferiorX, this.yP1);
 
-        // P2: Deeppink
+        // P2
         this.contorno(5, "deeppink");
         this.preenchimento("deeppink");
         this.ponto(this.xP2, this.limiteSuperiorY);
 
-        // P3: Darkorange
+        // P3
         this.contorno(5, "darkorange");
         this.preenchimento("darkorange");
         this.ponto(this.limiteSuperiorX, this.yP3);
 
-        // P4: Cadetblue
+        // P4
         this.contorno(5, "cadetblue");
         this.preenchimento("cadetblue");
         this.ponto(this.xP4, this.limiteInferiorY);
@@ -172,5 +171,5 @@ class DesafioPlanoPontos extends JS_CG_2D_API {
 }
 
 window.addEventListener("load", () => {
-    new DesafioPlanoPontos("Plano Completo", "gameCanvas", 60, 800, 600);
+    new DesafioPlanoPontos("Plano Completo", "gameCanvas", 800, 600);
 });

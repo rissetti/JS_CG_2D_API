@@ -60,8 +60,7 @@ class ExemploMario extends JS_CG_2D_API {
         // Buraco (Se cair da tela, morre e volta pro início)
         if (this.jogador.getY() > this.alturaTela()) {
             this.jogador.setX(50);
-            this.jogador.setY(400); 
-            // Dica: num jogo real, você tiraria uma vida do jogador aqui
+            this.jogador.setY(400);             
         }
 
         // Checa colisão com o objetivo (Vitória) usando Retangulo2D
@@ -109,5 +108,5 @@ class ExemploMario extends JS_CG_2D_API {
 
 // Inicializa o jogo no carregamento da página
 window.addEventListener("load", () => {  
-    new ExemploMario("Exemplo Mario", "gameCanvas", 60, 800, 600);
+    new ExemploMario("Exemplo Mario", "gameCanvas", 800, 600);
 });

@@ -50,5 +50,5 @@ class ExemploTransformacoes extends JS_CG_2D_API {
 }
 
 window.addEventListener("load", () => {
-  new ExemploTransformacoes("Conceito de Transformações", "gameCanvas", 60, 800, 600);
+  new ExemploTransformacoes("Conceito de Transformações", "gameCanvas", 800, 600);
 });

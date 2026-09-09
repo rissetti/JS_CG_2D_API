@@ -61,8 +61,8 @@ class ExemploCompleto2 extends JS_CG_2D_API {
   // ENTRADAS DE MOUSE
   movimentoDoMouse(e) {
     // Captura a posição do mouse relativa ao canvas
-    this.mousePos.x = e.offsetX;
-    this.mousePos.y = e.offsetY;
+    this.mousePos.x = e.x;
+    this.mousePos.y = e.y;
   }
 
   cliqueDoMouse(e) {
@@ -70,8 +70,8 @@ class ExemploCompleto2 extends JS_CG_2D_API {
     let metadeTamanho = 20;
 
     // Reposiciona a partir do centro do clique
-    this.jogador.x = e.offsetX - metadeTamanho;
-    this.jogador.y = e.offsetY - metadeTamanho;
+    this.jogador.x = e.x - metadeTamanho;
+    this.jogador.y = e.y - metadeTamanho;
   }
 
   // LÓGICA E FÍSICA (Loop de Atualização)
@@ -153,5 +153,5 @@ class ExemploCompleto2 extends JS_CG_2D_API {
 
 // INICIALIZAÇÃO NA PÁGINA
 window.addEventListener("load", () => {  
-  new ExemploCompleto2("Exemplo Completo 2", "gameCanvas", 60, 800, 600);
+  new ExemploCompleto2("Exemplo Completo 2", "gameCanvas", 800, 600);
 });

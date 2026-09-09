@@ -45,14 +45,14 @@ class Template extends JS_CG_2D_API {
     cliqueDoMouse(e) {
         // TODO: Escreva o que acontece ao clicar o mouse no canvas
         // Exemplo: Teleporta o jogador para onde clicou (centralizado)
-        this.jogador.x = e.offsetX - 20; 
-        this.jogador.y = e.offsetY - 20;
+        this.jogador.x = e.x - 20; 
+        this.jogador.y = e.y - 20;
     }
 
     movimentoDoMouse(e) {
         // TODO: Capturar a posição do cursor se necessário
-        //this.jogador.x = e.offsetX - 20;
-        //this.jogador.y = e.offsetY - 20;
+        //this.jogador.x = e.x - 20;
+        //this.jogador.y = e.y - 20;
     }
 
     // =========================================================================
@@ -101,5 +101,5 @@ class Template extends JS_CG_2D_API {
 
 // Inicia o jogo automaticamente assim que a página carregar
 window.addEventListener("load", () => {
-    new Template("Template", "gameCanvas", 60, 800, 600);
+    new Template("Template", "gameCanvas", 800, 600);
 });

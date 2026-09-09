@@ -90,5 +90,5 @@ class ExemploPersonagemInimigo extends JS_CG_2D_API {
 }
 
 window.addEventListener("load", () => {
-    new ExemploPersonagemInimigo("Personagem pulando, com gravidade!", "gameCanvas", 60, 800, 600);
+    new ExemploPersonagemInimigo("Personagem pulando, com gravidade!", "gameCanvas", 800, 600);
 });

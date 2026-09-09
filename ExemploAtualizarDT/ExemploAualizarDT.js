@@ -15,7 +15,7 @@ class ExemploAtualizarDT extends JS_CG_2D_API {
     });
   }
 
-  // 2. Mapeia as teclas pressionadas/soltas
+  // Mapeia as teclas pressionadas/soltas
   teclaPressionada(e) {
     this.teclas[e.key] = true;
   }
@@ -27,6 +27,7 @@ class ExemploAtualizarDT extends JS_CG_2D_API {
   // 100 pixels por segundo
   /*Delta Time: tempo decorrido desde o último frame em segundos.
    *Permite criar movimentações independentes da taxa de FPS (ex: velocidade * dt).   
+  */
   /*atualizar(dt) {
     if (this.teclas["ArrowRight"]) {
       this.jogador.x += this.jogador.velocidade * dt;
@@ -44,7 +45,7 @@ class ExemploAtualizarDT extends JS_CG_2D_API {
 
   // 100 pixels por frame
   atualizar() {
-    if (this.teclas["ArrowRight"]) {
+    if (this.teclas["ArrowRight"] || this.teclas["d"] || this.teclas["D"]) {
       this.jogador.x += this.jogador.velocidade;
     }
     if (this.teclas["ArrowLeft"]) {
@@ -55,7 +56,7 @@ class ExemploAtualizarDT extends JS_CG_2D_API {
     }
     if (this.teclas["ArrowDown"]) {
       this.jogador.y += this.jogador.velocidade;
-    }
+    }    
   } /**/
 
   desenhar() {
@@ -75,5 +76,5 @@ class ExemploAtualizarDT extends JS_CG_2D_API {
 
 // Inicia o jogo
 window.addEventListener("load", () => {
-  new ExemploAtualizarDT("Exemplo Atualizar DT", "gameCanvas", 60, 800, 600);
+  new ExemploAtualizarDT("Exemplo Atualizar DT", "gameCanvas", 800, 600, 20);
 });

@@ -40,7 +40,7 @@ class ExemploSonic extends JS_CG_2D_API {
         "#FFFFFF",
       )
       .setTamanhoFonte(16)
-      .setVibracao(30);
+      .setVibracao(60);
   }
 
   teclaPressionada(e) {

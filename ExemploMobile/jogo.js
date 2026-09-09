@@ -15,14 +15,12 @@ class ExemploMobile extends JS_CG_2D_API {
     
     this.criarBotaoTouch("btnEsq", 30, 460, 70, 70, "◄", "ArrowLeft")
       .setCores("rgba(0, 120, 255, 0.4)", "rgba(0, 120, 255, 0.8)", "#00d2ff")
-      .setTamanhoFonte(24)
-      .setVibracao(10);
+      .setTamanhoFonte(24);
 
     
     this.criarBotaoTouch("btnDir", 110, 460, 70, 70, "►", "ArrowRight")
       .setCores("rgba(0, 120, 255, 0.4)", "rgba(0, 120, 255, 0.8)", "#00d2ff")
-      .setTamanhoFonte(24)
-      .setVibracao(10);
+      .setTamanhoFonte(24);
 
     
     const botaoPulo = this.criarBotaoTouch("btnPulo",690, 460, 80, 70, "PULO", " ")
@@ -33,7 +31,7 @@ class ExemploMobile extends JS_CG_2D_API {
         "#ffffff",
       )
       .setTamanhoFonte(16)
-      .setVibracao(30);
+      .setVibracao(50);
     
     const pulo = this.getBotaoTouch("btnPulo");
     if (pulo) {

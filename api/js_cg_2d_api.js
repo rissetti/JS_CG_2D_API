@@ -117,7 +117,7 @@ class BotaoTouch {
     this.tamanhoFonte = 20;
 
     /** @type {number} Duração do feedback tátil de vibração em milissegundos (0 desativa). */
-    this.tempoVibracao = 15;
+    this.tempoVibracao = 30;
   }
 
   /**

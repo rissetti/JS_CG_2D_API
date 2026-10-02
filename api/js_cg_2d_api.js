@@ -1167,19 +1167,54 @@ class JS_CG_2D_API {
       this.gc.lineTo(xf, yf);
       this.gc.stroke();
     }
-  }
+  }  
 
-  /**
-   * Renderiza um texto na tela.
+ /**
+   * Renderiza um texto na tela com flexibilidade total de parâmetros.
+   * Os argumentos após (x, y) podem ser passados em qualquer ordem.
+   * 
    * @param {string} texto - Texto a ser escrito.
-   * @param {number} x - Posição X inicial.
-   * @param {number} y - Posição Y da linha de base do texto.
-   * @param {number} tam - Tamanho da fonte em pixels.
-   * @param {string} [tipo="normal"] - Estilo/Peso do texto (ex: "bold", "italic").
+   * @param {number} x - Posição X (coordenada horizontal).
+   * @param {number} y - Posição Y (linha de base do texto).
+   * @param {...(number|string)} opcoes - Configurações opcionais em qualquer ordem:
+   * 
+   *   - **Tamanho da Fonte** (`number`):
+   *     - Exemplo: `24` *(padrão: 16)*
+   * 
+   *   - **Estilo/Peso** (`string`):
+   *     - `"normal"`
+   *     - `"bold"`
+   *     - `"italic"`
+   *     - `"bold italic"` *(padrão: "normal")*
+   * 
+   *   - **Alinhamento** (`string`):
+   *     - `"left"` (alinha o início do texto em X)
+   *     - `"center"` (centraliza o texto em X)
+   *     - `"right"` (alinha o fim do texto em X) *(padrão: "left")*
    */
-  texto(texto, x, y, tam, tipo = "normal") {
+  texto(texto, x, y, ...opcoes) {
+    let tam = 16;
+    let tipo = "normal";
+    let alinhamento = "left";
+
+    const alinhamentosValidos = ["left", "center", "right"];
+
+    for (const arg of opcoes) {
+      if (typeof arg === "number") {
+        tam = arg;
+      } else if (typeof arg === "string") {
+        if (alinhamentosValidos.includes(arg.toLowerCase())) {
+          alinhamento = arg.toLowerCase();
+        } else {
+          tipo = arg;
+        }
+      }
+    }
+
     this.gc.font = `${tipo} ${tam}px "Times New Roman"`;
+    this.gc.textAlign = alinhamento;
     this.gc.fillText(texto, x, y);
+    this.gc.textAlign = "left"; // Restaura o padrão para não afetar outras chamadas
   }
 
   /**
@@ -1566,7 +1601,7 @@ class JS_CG_2D_API {
 
       if (btn.rotulo) {
         this.preenchimento(btn.corTexto);
-        this.gc.textAlign = "center";
+        // Define o alinhamento vertical temporariamente para o botão
         this.gc.textBaseline = "middle";
         this.texto(
           btn.rotulo,
@@ -1574,7 +1609,10 @@ class JS_CG_2D_API {
           btn.y + btn.altura / 2,
           btn.tamanhoFonte,
           "bold",
+          "center"
         );
+        // Restaura o alinhamento vertical padrão do Canvas
+        this.gc.textBaseline = "alphabetic";
       }
     }
     this.desempilhar();
